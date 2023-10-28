@@ -6,7 +6,7 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class addDialog;
+class AddDialog;
 }
 QT_END_NAMESPACE
 
@@ -17,8 +17,9 @@ class AddDialog : public QDialog {
     explicit AddDialog(QWidget *parent = nullptr);
     ~AddDialog();
 
+    void Show();
  private:
-    Ui::addDialog *ui;
+    Ui::AddDialog *ui_;
 
 };
 

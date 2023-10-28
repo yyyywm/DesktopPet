@@ -6,7 +6,7 @@
 #include <QSettings>
 
 struct eventList {
-//    QCheckBox *done = new QCheckBox;
+    QCheckBox *done = new QCheckBox;
     QString event;
 };
 

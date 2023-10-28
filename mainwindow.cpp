@@ -5,7 +5,6 @@
 #include <QBitmap>
 #include <QMouseEvent>
 #include <QColorDialog>
-#include <QSettings>
 #include <QDebug>
 #include "Struct.h"
 
@@ -55,10 +54,11 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
+/// TODO: 图片用户自定义 可以直接从配置文件中读取
 void MainWindow::paintEvent(QPaintEvent *) {
     QPainter P(this);        //创建画家对象
     P.begin(this);          //指定当前窗口为绘图设备
-    P.drawPixmap(10, 0, QPixmap("../image/image.png"));  // 显示图片
+    P.drawPixmap(10, 0, QPixmap("../image/image_left.png"));  // 显示图片
 }
 
 //拖拽操作
@@ -108,7 +108,7 @@ void MainWindow::CreateActions() {
     connect(show_action_, &QAction::triggered, this, [&] {
 //      this->show();
       add_event_->setWindowFlags(Qt::CoverWindow);
-      add_event_->show();
+      add_event_->Show();
       qDebug() << "Add";
 
     });
