@@ -31,6 +31,8 @@ set(PROJECT_SOURCES
         core/config_store.cpp
         core/event_repository.h
         core/event_repository.cpp
+        services/update_service.h
+        services/update_service.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -64,6 +66,7 @@ target_include_directories(desktop_todo PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/ui
         ${CMAKE_CURRENT_SOURCE_DIR}/core
+        ${CMAKE_CURRENT_SOURCE_DIR}/services
         )
 
 set_target_properties(desktop_todo PROPERTIES

@@ -14,6 +14,7 @@
 #include "add_dialog.h"
 
 #include "core/event_repository.h"
+#include "services/update_service.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -23,8 +24,10 @@ class MainWindow : public QMainWindow {
  Q_OBJECT
 
  public:
-    explicit MainWindow(QWidget *parent,
-                        desktop_todo::core::EventRepository* event_repository);
+    explicit MainWindow(
+        QWidget *parent,
+        desktop_todo::core::EventRepository* event_repository,
+        desktop_todo::services::UpdateService* update_service);
     ~MainWindow();
 
     QSystemTrayIcon *tray_icon_;
@@ -32,12 +35,21 @@ class MainWindow : public QMainWindow {
     QAction *show_action_;
     QAction *exit_action_;
     QAction *hide_action_;
+    QAction *update_action_;
     void CreateActions();
     void CreateMenu();
 
  private:
+    void OnUpToDate();
+    void OnUpdateAvailable(const QString& release_date,
+                           const QString& log,
+                           const QString& url);
+    void OnUpdateCheckFailed(const QString& reason);
+    void OpenUrlInBrowser(const QString& url);
+
     Ui::MainWindow *ui_;
     desktop_todo::core::EventRepository* event_repository_ = nullptr;
+    desktop_todo::services::UpdateService* update_service_ = nullptr;
     bool m_b_drag_{};  // 判断拖拽状态
     QPointF mouse_start_point_;   // 鼠标起点坐标
     QPointF window_top_left_point_;  // 窗口左上角坐标

@@ -7,6 +7,7 @@
 #include "core/config_store.h"
 #include "core/event_repository.h"
 #include "core/qsettings_adapter.h"
+#include "services/update_service.h"
 
 int main(int argc, char *argv[]) {
   QApplication a(argc, argv);
@@ -20,7 +21,9 @@ int main(int argc, char *argv[]) {
   desktop_todo::core::EventRepository event_repository(config_store.get());
   event_repository.Load();
 
-  MainWindow w(nullptr, &event_repository);
+  desktop_todo::services::UpdateService update_service;
+
+  MainWindow w(nullptr, &event_repository, &update_service);
   w.show();
   return a.exec();
 }

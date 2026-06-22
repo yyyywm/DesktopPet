@@ -6,13 +6,17 @@
 #include <QMouseEvent>
 #include <QColorDialog>
 #include <QDebug>
+#include <QMessageBox>
+#include <QProcess>
 
 MainWindow::MainWindow(
     QWidget *parent,
-    desktop_todo::core::EventRepository* event_repository)
+    desktop_todo::core::EventRepository* event_repository,
+    desktop_todo::services::UpdateService* update_service)
     : QMainWindow(parent),
       ui_(new Ui::MainWindow),
       event_repository_(event_repository),
+      update_service_(update_service),
       todo_win_(new TaskListDialog(nullptr, event_repository)),
       add_event_(new AddDialog(nullptr, event_repository)) {
     ui_->setupUi(this);
@@ -39,6 +43,15 @@ MainWindow::MainWindow(
     connect(tray_icon_, &QSystemTrayIcon::messageClicked, [&]() {
       this->show();
     });
+
+    connect(update_service_, &desktop_todo::services::UpdateService::UpToDate,
+            this, &MainWindow::OnUpToDate);
+    connect(update_service_,
+            &desktop_todo::services::UpdateService::UpdateAvailable,
+            this, &MainWindow::OnUpdateAvailable);
+    connect(update_service_,
+            &desktop_todo::services::UpdateService::CheckFailed,
+            this, &MainWindow::OnUpdateCheckFailed);
 
     //建立托盘操作的菜单
     CreateActions();
@@ -114,16 +127,55 @@ void MainWindow::CreateActions() {
       this->hide();
     });
 
+    update_action_ = new QAction(("Update"), this);
+    connect(update_action_, &QAction::triggered, this, [&] {
+      update_service_->CheckForUpdates();
+    });
+
     exit_action_ = new QAction(("Quit"), this);
     connect(exit_action_, &QAction::triggered, this, [&] {
       exit(0);
     });
 }
 
+void MainWindow::OnUpToDate() {
+    QMessageBox msgBox;
+    msgBox.setText(QStringLiteral("已经是最新版本啦！^-^"));
+    msgBox.exec();
+}
+
+void MainWindow::OnUpdateAvailable(const QString& /*release_date*/,
+                                   const QString& log,
+                                   const QString& url) {
+    QMessageBox msgBox;
+    msgBox.setText(QStringLiteral("检测到有新版本！"));
+    msgBox.setInformativeText(log);
+    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+    msgBox.setDefaultButton(QMessageBox::Cancel);
+    if (msgBox.exec() == QMessageBox::Ok) {
+        OpenUrlInBrowser(url);
+    }
+}
+
+void MainWindow::OnUpdateCheckFailed(const QString& /*reason*/) {
+    QMessageBox msgBox;
+    msgBox.setText(QStringLiteral("网络错误^-^！"));
+    msgBox.exec();
+}
+
+void MainWindow::OpenUrlInBrowser(const QString& url) {
+    QProcess process;
+    const QString command = QStringLiteral("start ") + url;
+    process.start(QStringLiteral("cmd"), QStringList() << QStringLiteral("/c") << command);
+    process.waitForStarted();
+    process.waitForFinished();
+}
+
 void MainWindow::CreateMenu() {
     m_menu_ = new QMenu(this);
     m_menu_->addAction(show_action_);
     m_menu_->addAction(hide_action_);
+    m_menu_->addAction(update_action_);
     m_menu_->addAction(exit_action_);
     tray_icon_->setContextMenu(m_menu_);
 }
