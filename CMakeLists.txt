@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
         ui/add_dialog.h
         ui/add_dialog.cpp
         ui/add_dialog.ui
+        core/event.h
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -56,6 +57,7 @@ target_link_libraries(desktop_todo PRIVATE Qt6::Network)
 target_include_directories(desktop_todo PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}
         ${CMAKE_CURRENT_SOURCE_DIR}/ui
+        ${CMAKE_CURRENT_SOURCE_DIR}/core
         )
 
 set_target_properties(desktop_todo PROPERTIES
