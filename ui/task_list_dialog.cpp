@@ -1,18 +1,25 @@
 #include "task_list_dialog.h"
-#include "Struct.h"
 #include "ui_task_list_dialog.h"
+
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QHeaderView>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QTableWidgetItem>
 
 // 这个是查看事件的窗口
 
-TaskListDialog::TaskListDialog(QWidget *parent) : QWidget(parent), ui_(new Ui::TaskListDialog) {
+TaskListDialog::TaskListDialog(
+    QWidget *parent,
+    desktop_todo::core::EventRepository* event_repository)
+    : QWidget(parent),
+      ui_(new Ui::TaskListDialog),
+      event_repository_(event_repository) {
     ui_->setupUi(this);
     ui_->todolist->horizontalHeader()->setSectionResizeMode(
-            QHeaderView::Stretch); // 设置表格平分
-    //    ui_->todolist->setColumnWidth(0, 80);
+        QHeaderView::Stretch);  // 设置表格平分
     ui_->todolist->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
 }
 
 TaskListDialog::~TaskListDialog() { delete ui_; }
@@ -22,71 +29,79 @@ void TaskListDialog::ShowList() {
     LoadEvent();
     Sentence();
     this->setWindowFlags(Qt::CoverWindow | Qt::FramelessWindowHint |
-                         windowFlags()); // 设置窗口置顶，边框隐藏
-    this->setAttribute(Qt::WA_TranslucentBackground); // 设置窗口透明
+                         windowFlags());  // 设置窗口置顶，边框隐藏
+    this->setAttribute(Qt::WA_TranslucentBackground);  // 设置窗口透明
     this->show();
 }
 
-/// TODO: 1.
-/// 关闭窗口的时候判断checkbox，然后删除eventlist里面的内容，再重写配置文件
-
 void TaskListDialog::HideList() {
-    for (int i = 0; i < eventCount; ++i) {
-        if (eventlist[i].done->checkState() == Qt::Checked) {
-            eventlist.removeAt(i);
-            eventCount--;
-            qDebug() << "delet: " << i;
+    // Sync checkbox state back to the model before deleting.
+    for (int row = 0; row < row_event_ids_.size(); ++row) {
+        QCheckBox* checkbox = qobject_cast<QCheckBox*>(
+            ui_->todolist->cellWidget(row, 0));
+        if (checkbox == nullptr) {
+            continue;
+        }
+        desktop_todo::core::Event* event =
+            event_repository_->FindEvent(row_event_ids_[row]);
+        if (event != nullptr) {
+            event->set_done(checkbox->checkState() == Qt::Checked);
         }
     }
-    cfg->beginGroup("eventList");
-    cfg->clear();
-    cfg->setValue("count", eventCount);
-    for (int i = 0; i < eventCount; ++i) {
-        cfg->setValue("event" + QString::number(i + 1), eventlist[i].event);
+
+    // Remove done events. Iterate backwards so indices remain valid.
+    auto& events = event_repository_->events();
+    for (int i = events.size() - 1; i >= 0; --i) {
+        if (events[i].done()) {
+            events.removeAt(i);
+        }
     }
-    cfg->endGroup();
+
+    event_repository_->Save();
     this->hide();
 }
 
 // 加载列表内的事件
 void TaskListDialog::LoadEvent() {
-    cfg->beginGroup("eventList");
-    eventCount = cfg->value("count").toInt(); // 先从配置文件中获取事件的个数
-    eventlist.clear();
+    row_event_ids_.clear();
+    auto& events = event_repository_->events();
 
-    for (int i = 0; i < eventCount; ++i) {
-        eventList node;
-        node.done->setCheckState(Qt::Unchecked);
-        node.event = cfg->value("event" + QString::number(i + 1)).toString();
-        eventlist.append(node); // 从配置文件中读取事件存到列表中
+    ui_->todolist->clearContents();
+    ui_->todolist->setRowCount(events.size());
+    for (int i = 0; i < events.size(); ++i) {
+        row_event_ids_.append(events[i].id());
 
-//        disconnect(eventlist[i].done, 0, 0, 0);
-//        connect(eventlist[i].done, &QCheckBox::stateChanged, this, [&, i] {
-////            ui_->tableWidget->removeRow(i);      // 删除那一行
-//            eventlist.removeAt(i);               // 从事件列表中删除
-//            eventCount -= eventCount;
-//
-////            qDebug() << eventlist[i].event;
-//        });
-    }
-    cfg->endGroup();
-
-    ui_->todolist->setRowCount(eventCount);
-    for (int i = 0; i < eventCount; ++i) {
         // 控件居中显示
-        QWidget *widget = new QWidget;
-        QHBoxLayout *layout = new QHBoxLayout;
+        QWidget* widget = new QWidget(this);
+        QHBoxLayout* layout = new QHBoxLayout(widget);
         layout->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-        eventlist[i].done->setFixedHeight(15);          // 这个数好像15最合适
-        layout->addWidget(eventlist[i].done);
-        widget->setLayout(layout);
+        QCheckBox* checkbox = new QCheckBox(widget);
+        checkbox->setChecked(events[i].done());
+        checkbox->setFixedHeight(15);  // 这个数好像15最合适
+        layout->addWidget(checkbox);
+        layout->setContentsMargins(0, 0, 0, 0);
         ui_->todolist->setCellWidget(i, 0, widget);
 
-        ui_->todolist->setItem(
-                i, 1,
-                new QTableWidgetItem(eventlist[i].event)); // 渲染列表中存储好的事件
-        ui_->todolist->item(i, 1)->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);  // 设置文本居中
+        connect(checkbox, &QCheckBox::stateChanged, this, [this, i](int state) {
+            OnCheckBoxStateChanged(i, state);
+        });
 
+        ui_->todolist->setItem(
+            i, 1,
+            new QTableWidgetItem(events[i].text()));  // 渲染列表中存储好的事件
+        ui_->todolist->item(i, 1)
+            ->setTextAlignment(Qt::AlignHCenter | Qt::AlignVCenter);  // 设置文本居中
+    }
+}
+
+void TaskListDialog::OnCheckBoxStateChanged(int row, int state) {
+    if (row < 0 || row >= row_event_ids_.size()) {
+        return;
+    }
+    desktop_todo::core::Event* event =
+        event_repository_->FindEvent(row_event_ids_[row]);
+    if (event != nullptr) {
+        event->set_done(state == Qt::Checked);
     }
 }
 

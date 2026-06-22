@@ -56,7 +56,7 @@ class MainWindow : public QMainWindow {
     // 鼠标释放事件
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-    TaskListDialog *todo_win_ = new TaskListDialog;
+    TaskListDialog *todo_win_ = nullptr;
 
     AddDialog *add_event_ = new AddDialog;
 
