@@ -4,7 +4,7 @@ import QtQuick.Layouts
 
 RowLayout {
     id: root
-    width: ListView.view ? ListView.view.width : implicitWidth
+    width: ListView.view.width
     spacing: Theme.paddingSmall
 
     required property int index

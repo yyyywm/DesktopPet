@@ -5,23 +5,22 @@ import QtQuick.Layouts
 PetWindow {
     id: petWindow
 
-    Connections {
-        target: App
-        function onShowPetWindowRequested() {
+    Component.onCompleted: {
+        App.ShowPetWindowRequested.connect(function () {
             petWindow.show()
-        }
-        function onHidePetWindowRequested() {
+        })
+        App.HidePetWindowRequested.connect(function () {
             petWindow.hide()
-        }
-        function onOpenAddDialogRequested() {
+        })
+        App.OpenAddDialogRequested.connect(function () {
             addDialog.openFromModel()
-        }
-        function onUpdateMessageRequested(title, body, url) {
+        })
+        App.UpdateMessageRequested.connect(function (title, body, url) {
             updateDialog.title = title
             updateDialog.body = body
             updateDialog.url = url
             updateDialog.open()
-        }
+        })
     }
 
     onRightClicked: {

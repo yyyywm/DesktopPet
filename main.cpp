@@ -1,6 +1,6 @@
 #include <memory>
 
-#include <QGuiApplication>
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QDir>
@@ -13,7 +13,7 @@
 #include "ui/task_list_model.h"
 
 int main(int argc, char* argv[]) {
-  QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
 
   const QString config_path =
       QDir::current().filePath(QStringLiteral("../config/eventlist.ini"));
@@ -34,7 +34,8 @@ int main(int argc, char* argv[]) {
       QStringLiteral("TaskModel"), &task_model);
   engine.rootContext()->setContextProperty(QStringLiteral("App"), &controller);
 
-  const QUrl url(QStringLiteral("qrc:/DesktopPet/qml/main.qml"));
+  const QUrl url = QUrl::fromLocalFile(
+      QDir::current().filePath(QStringLiteral("qml/main.qml")));
   QObject::connect(
       &engine, &QQmlApplicationEngine::objectCreated, &app,
       [url](QObject* obj, const QUrl& obj_url) {

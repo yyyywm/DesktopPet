@@ -75,7 +75,7 @@ Qt::ItemFlags TaskListModel::flags(const QModelIndex& index) const {
 
 QHash<int, QByteArray> TaskListModel::roleNames() const {
   QHash<int, QByteArray> roles;
-  roles[IdRole] = "id";
+  roles[IdRole] = "eventId";
   roles[TextRole] = "text";
   roles[DoneRole] = "done";
   roles[PriorityRole] = "priority";

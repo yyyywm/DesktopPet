@@ -38,14 +38,9 @@ Window {
             Layout.fillHeight: true
             model: TaskModel
             clip: true
-            spacing: 6
+            spacing: Theme.paddingSmall
 
             delegate: TaskListItem {
-                index: model.index
-                eventId: model.id
-                text: model.text
-                done: model.done
-
                 onTextEdited: function (newText) {
                     TaskModel.setData(TaskModel.index(index, 0), newText, TaskModel.TextRole)
                 }
