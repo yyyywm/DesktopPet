@@ -25,6 +25,11 @@ set(PROJECT_SOURCES
         ui/add_dialog.cpp
         ui/add_dialog.ui
         core/event.h
+        core/settings_interface.h
+        core/qsettings_adapter.h
+        core/qsettings_adapter.cpp
+        core/config_store.h
+        core/config_store.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
