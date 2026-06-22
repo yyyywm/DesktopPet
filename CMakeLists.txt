@@ -20,7 +20,6 @@ set(PROJECT_SOURCES
         ui/task_list_dialog.h
         ui/task_list_dialog.cpp
         ui/task_list_dialog.ui
-        Struct.h
         ui/add_dialog.h
         ui/add_dialog.cpp
         ui/add_dialog.ui
