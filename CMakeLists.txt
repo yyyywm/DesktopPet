@@ -14,16 +14,16 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        ui/mainwindow.cpp
-        ui/mainwindow.h
-        ui/mainwindow.ui
-        ui/form.h
-        ui/form.cpp
-        ui/form.ui
+        ui/main_window.cpp
+        ui/main_window.h
+        ui/main_window.ui
+        ui/task_list_dialog.h
+        ui/task_list_dialog.cpp
+        ui/task_list_dialog.ui
         Struct.h
-        ui/adddialog.h
-        ui/adddialog.cpp
-        ui/adddialog.ui
+        ui/add_dialog.h
+        ui/add_dialog.cpp
+        ui/add_dialog.ui
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)

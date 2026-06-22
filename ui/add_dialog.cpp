@@ -1,6 +1,6 @@
-#include "adddialog.h"
+#include "add_dialog.h"
 #include "Struct.h"
-#include "ui_adddialog.h"
+#include "ui_add_dialog.h"
 
 // 这个是添加事件的窗口
 

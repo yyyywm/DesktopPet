@@ -1,6 +1,6 @@
 
-#ifndef DESKTOP_TODO__MAINWINDOW_H_
-#define DESKTOP_TODO__MAINWINDOW_H_
+#ifndef DESKTOP_TODO__MAIN_WINDOW_H_
+#define DESKTOP_TODO__MAIN_WINDOW_H_
 
 #include <QMainWindow>
 #include <QSystemTrayIcon>
@@ -10,8 +10,8 @@
 #include <QTextCharFormat>
 #include <QPainter>
 #include <QBitmap>
-#include "form.h"
-#include "adddialog.h"
+#include "task_list_dialog.h"
+#include "add_dialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -52,7 +52,7 @@ class MainWindow : public QMainWindow {
     // 鼠标释放事件
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-    Form *todo_win_ = new Form;
+    TaskListDialog *todo_win_ = new TaskListDialog;
 
     AddDialog *add_event_ = new AddDialog;
 
@@ -61,4 +61,4 @@ class MainWindow : public QMainWindow {
 
 };
 
-#endif // DESKTOP_TODO__MAINWINDOW_H_
+#endif // DESKTOP_TODO__MAIN_WINDOW_H_

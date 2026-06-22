@@ -1,12 +1,12 @@
-#include "form.h"
+#include "task_list_dialog.h"
 #include "Struct.h"
-#include "ui_form.h"
+#include "ui_task_list_dialog.h"
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
 // 这个是查看事件的窗口
 
-Form::Form(QWidget *parent) : QWidget(parent), ui_(new Ui::Form) {
+TaskListDialog::TaskListDialog(QWidget *parent) : QWidget(parent), ui_(new Ui::TaskListDialog) {
     ui_->setupUi(this);
     ui_->todolist->horizontalHeader()->setSectionResizeMode(
             QHeaderView::Stretch); // 设置表格平分
@@ -15,10 +15,10 @@ Form::Form(QWidget *parent) : QWidget(parent), ui_(new Ui::Form) {
 
 }
 
-Form::~Form() { delete ui_; }
+TaskListDialog::~TaskListDialog() { delete ui_; }
 
 //  显示任务列表
-void Form::ShowList() {
+void TaskListDialog::ShowList() {
     LoadEvent();
     Sentence();
     this->setWindowFlags(Qt::CoverWindow | Qt::FramelessWindowHint |
@@ -30,7 +30,7 @@ void Form::ShowList() {
 /// TODO: 1.
 /// 关闭窗口的时候判断checkbox，然后删除eventlist里面的内容，再重写配置文件
 
-void Form::HideList() {
+void TaskListDialog::HideList() {
     for (int i = 0; i < eventCount; ++i) {
         if (eventlist[i].done->checkState() == Qt::Checked) {
             eventlist.removeAt(i);
@@ -49,7 +49,7 @@ void Form::HideList() {
 }
 
 // 加载列表内的事件
-void Form::LoadEvent() {
+void TaskListDialog::LoadEvent() {
     cfg->beginGroup("eventList");
     eventCount = cfg->value("count").toInt(); // 先从配置文件中获取事件的个数
     eventlist.clear();
@@ -91,7 +91,7 @@ void Form::LoadEvent() {
 }
 
 /// 开启了一言模式的话，拉低了性能。
-void Form::Sentence() {
+void TaskListDialog::Sentence() {
 //    QNetworkAccessManager *manager = new QNetworkAccessManager(this);
 //    QEventLoop loop;
 //    QNetworkReply *reply = manager->get(

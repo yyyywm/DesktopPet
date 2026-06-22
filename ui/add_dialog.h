@@ -1,5 +1,5 @@
-#ifndef ADDDIALOG_H
-#define ADDDIALOG_H
+#ifndef DESKTOP_TODO__ADD_DIALOG_H_
+#define DESKTOP_TODO__ADD_DIALOG_H_
 
 #include <QDialog>
 #include "Struct.h"
@@ -23,4 +23,4 @@ class AddDialog : public QDialog {
 
 };
 
-#endif // ADDDIALOG_H
+#endif // DESKTOP_TODO__ADD_DIALOG_H_
