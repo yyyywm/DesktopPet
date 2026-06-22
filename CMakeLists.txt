@@ -14,16 +14,16 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        mainwindow.cpp
-        mainwindow.h
-        mainwindow.ui
-        form.h
-        form.cpp
-        form.ui
+        ui/mainwindow.cpp
+        ui/mainwindow.h
+        ui/mainwindow.ui
+        ui/form.h
+        ui/form.cpp
+        ui/form.ui
         Struct.h
-        adddialog.h
-        adddialog.cpp
-        adddialog.ui
+        ui/adddialog.h
+        ui/adddialog.cpp
+        ui/adddialog.ui
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
@@ -52,6 +52,11 @@ endif ()
 target_link_libraries(desktop_todo PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 find_package(Qt6 COMPONENTS Network REQUIRED)
 target_link_libraries(desktop_todo PRIVATE Qt6::Network)
+
+target_include_directories(desktop_todo PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_SOURCE_DIR}/ui
+        )
 
 set_target_properties(desktop_todo PROPERTIES
         MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
