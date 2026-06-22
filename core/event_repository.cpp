@@ -62,14 +62,18 @@ void EventRepository::Clear() {
 
 void EventRepository::SetEventText(int id, QString text) {
   Event* event = FindEvent(id);
-  if (event == nullptr) return;
+  if (event == nullptr) {
+    return;
+  }
   event->set_text(std::move(text));
   emit EventChanged(id);
 }
 
 void EventRepository::SetEventDone(int id, bool done) {
   Event* event = FindEvent(id);
-  if (event == nullptr) return;
+  if (event == nullptr) {
+    return;
+  }
   event->set_done(done);
   emit EventChanged(id);
 }
