@@ -20,9 +20,10 @@ set(PROJECT_SOURCES
         ui/task_list_dialog.h
         ui/task_list_dialog.cpp
         ui/task_list_dialog.ui
-        ui/add_dialog.h
-        ui/add_dialog.cpp
-        ui/add_dialog.ui
+        ui/task_list_model.h
+        ui/task_list_model.cpp
+        ui/application_controller.h
+        ui/application_controller.cpp
         core/event.h
         core/settings_interface.h
         core/qsettings_adapter.h
