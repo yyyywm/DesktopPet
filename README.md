@@ -5,10 +5,33 @@
 
 ## Now 😦
 
-* 目前ToDoList的基本显示功能已经完成，已经能够作为日常使用的工具，还可以隐藏到托盘。
-* 存在问题：
-  1. 代码整体架构需要调整，变量的命名规范，变量使用的优化。
-  2. 各种功能的优化，有很多地方都写了重复的用法。
+* 目前 ToDoList 的基本显示功能已经完成，能够作为日常使用的工具，还可以隐藏到托盘。
+* 已完成一次结构重构：
+  1. 项目拆分为 `core` / `services` / `ui` / `app` 四层，职责清晰。
+  2. 消除了全局状态，统一通过 `EventRepository` 管理任务数据。
+  3. 统一使用 Google C++ 命名规范。
+  4. 修复了删除索引漂移、添加对话框计数不同步、配置延迟写入、版本检查同步阻塞等问题。
+
+## 项目结构
+
+```
+DesktopPet
+├── core/          # 领域模型、配置抽象、事件仓储
+├── services/      # 公共服务（版本检查等）
+├── ui/            # 窗口与 .ui 文件
+├── main.cpp       # 依赖装配入口
+├── config/        # .ini 配置文件
+└── image/         # 图片与 GIF 资源
+```
+
+## 构建
+
+```bash
+cmake -S . -B build -G "MinGW Makefiles" -D CMAKE_PREFIX_PATH="D:/Qt/6.2.4/mingw_64/lib/cmake"
+cmake --build build
+```
+
+运行 `build/desktop_todo.exe` 即可。程序使用 `../config/eventlist.ini` 保存任务数据。
 
 ## The goal 😶‍🌫️
 
