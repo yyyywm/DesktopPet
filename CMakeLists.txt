@@ -30,6 +30,8 @@ set(PROJECT_SOURCES
         core/qsettings_adapter.cpp
         core/config_store.h
         core/config_store.cpp
+        core/event_repository.h
+        core/event_repository.cpp
         )
 
 if (${QT_VERSION_MAJOR} GREATER_EQUAL 6)
