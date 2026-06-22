@@ -58,7 +58,7 @@ class MainWindow : public QMainWindow {
 
     TaskListDialog *todo_win_ = nullptr;
 
-    AddDialog *add_event_ = new AddDialog;
+    AddDialog *add_event_ = nullptr;
 
  private slots:
     void OnActivatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);

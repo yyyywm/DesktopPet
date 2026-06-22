@@ -10,7 +10,11 @@
 MainWindow::MainWindow(
     QWidget *parent,
     desktop_todo::core::EventRepository* event_repository)
-    : QMainWindow(parent), ui_(new Ui::MainWindow), event_repository_(event_repository), todo_win_(new TaskListDialog(nullptr, event_repository)) {
+    : QMainWindow(parent),
+      ui_(new Ui::MainWindow),
+      event_repository_(event_repository),
+      todo_win_(new TaskListDialog(nullptr, event_repository)),
+      add_event_(new AddDialog(nullptr, event_repository)) {
     ui_->setupUi(this);
 
     qDebug() << "start!!!";
