@@ -6,7 +6,6 @@
 #include <QMouseEvent>
 #include <QColorDialog>
 #include <QDebug>
-#include "Struct.h"
 
 MainWindow::MainWindow(
     QWidget *parent,
@@ -15,16 +14,6 @@ MainWindow::MainWindow(
     ui_->setupUi(this);
 
     qDebug() << "start!!!";
-
-    cfg->beginGroup("eventList");
-    eventCount = cfg->value("count").toInt();
-    qDebug() << "开始" << eventCount;
-    for (int i = 0; i < eventCount; ++i) {
-        eventList node;
-        node.event = cfg->value("event" + QString::number(i)).toString();
-        eventlist.append(node);
-    }
-    cfg->endGroup();
 
     // 去边框
     setWindowFlags(Qt::FramelessWindowHint | windowFlags());
