@@ -1,84 +1,121 @@
-# 桌面宠物&&ToDoList 😀
+# 桌面宠物 && ToDoList 😀
 
-> 灵感来源: 网上的很多todo-list软件不好用, 不够便捷.
-功能会在使用中逐渐完善, 现在只有一些基本功能
+> 灵感来源：网上的很多 todo-list 软件不好用，不够便捷。  
+> 一个 Qt6 桌面宠物 + 待办清单小工具，支持托盘隐藏、任务管理、版本检查等功能。
 
-## Now 😦
+---
 
-* 目前 ToDoList 的基本显示功能已经完成，能够作为日常使用的工具，还可以隐藏到托盘。
-* 已完成一次结构重构：
-  1. 项目拆分为 `core` / `services` / `ui` / `app` 四层，职责清晰。
-  2. 消除了全局状态，统一通过 `EventRepository` 管理任务数据。
-  3. 统一使用 Google C++ 命名规范。
-  4. 修复了删除索引漂移、添加对话框计数不同步、配置延迟写入、版本检查同步阻塞等问题。
+## 功能
+
+- 🐱 桌面宠物小窗口，支持拖拽移动。
+- ✅ ToDoList 任务展示、添加、删除。
+- ☑️ 勾选完成任务后隐藏窗口自动清理。
+- 🔔 系统托盘图标，右键快速添加/隐藏/检查更新/退出。
+- 🌐 异步版本检查与更新提示。
+
+---
 
 ## 项目结构
 
 ```
 DesktopPet
-├── core/          # 领域模型、配置抽象、事件仓储
-├── services/      # 公共服务（版本检查等）
-├── ui/            # 窗口与 .ui 文件
-├── main.cpp       # 依赖装配入口
-├── config/        # .ini 配置文件
-└── image/         # 图片与 GIF 资源
+├── core/               # 领域模型与数据持久化
+│   ├── event.h              # Event 领域模型
+│   ├── settings_interface.h # 配置存储抽象
+│   ├── qsettings_adapter.h/.cpp  # QSettings 适配器
+│   ├── config_store.h/.cpp       # 事件序列化/反序列化
+│   └── event_repository.h/.cpp   # 事件仓储
+├── services/           # 公共服务
+│   └── update_service.h/.cpp     # 异步版本检查
+├── ui/                 # 窗口与 Qt .ui 文件
+│   ├── main_window.h/.cpp/.ui    # 主窗口/宠物/托盘
+│   ├── task_list_dialog.h/.cpp/.ui   # 任务列表窗口（原 Form）
+│   └── add_dialog.h/.cpp/.ui     # 添加/编辑任务窗口（原 AddDialog）
+├── main.cpp            # 依赖装配入口
+├── config/
+│   └── eventlist.ini   # 任务配置文件
+└── image/              # 图片与 GIF 资源
 ```
 
+---
+
 ## 构建
+
+### 环境要求
+
+- Qt 6（或 Qt 5，CMakeLists 做了兼容）
+- CMake 3.5+
+- MinGW / MSVC / 其他 Qt 支持的编译器
+
+### 使用 MinGW
 
 ```bash
 cmake -S . -B build -G "MinGW Makefiles" -D CMAKE_PREFIX_PATH="D:/Qt/6.2.4/mingw_64/lib/cmake"
 cmake --build build
 ```
 
-运行 `build/desktop_todo.exe` 即可。程序使用 `../config/eventlist.ini` 保存任务数据。
+运行：
 
-## The goal 😶‍🌫️
+```bash
+./build/desktop_todo.exe
+```
+
+程序使用 `../config/eventlist.ini` 保存任务数据，请从项目根目录或 build 目录运行。
+
+---
+
+## 使用方式
+
+- **添加事件**：在系统托盘图标上右键，选择 `Add`。
+- **显示任务列表**：在桌面宠物窗口上点击右键。
+- **隐藏任务列表**：在桌面宠物窗口上点击左键并拖动，或再次点击左键。
+- **完成任务**：在任务列表中勾选，隐藏窗口后自动删除已勾选任务。
+- **检查更新**：托盘菜单选择 `Update`。
+- **退出**：托盘菜单选择 `Quit`。
+
+---
+
+## 代码规范
+
+本项目遵循 **Google C++ Style**：
+
+- 文件名：`lower_with_underscore.cpp/.h/.ui`
+- 类名：`UpperCamelCase`
+- 成员变量：以尾部下划线结尾，例如 `event_repository_`
+- 函数名：`UpperCamelCase`
+- 枚举/常量：`kUpperCamelCase`
+- 头文件包含守卫：`DESKTOP_TODO__<PATH>_<FILE>_H_`
+
+具体约束见 `AGENTS.md`。
+
+---
+
+## 待办/未来计划
 
 ### ToDoList
 
-* 任务列表的展示.
-* 选择框删除已完成的任务
-* 根据事情的重要性,改变任务的颜色.（DLC）
-* 任务提醒
-* 番茄时钟, 高效工作. 
-  * 可以直接在宠物旁边直接加个时钟进行倒计时
-* ......
-
+- [ ] 根据任务重要性显示不同颜色
+- [ ] 任务提醒
+- [ ] 番茄时钟
 
 ### Desktop Pet
 
-* 微信消息提醒
-  * 可以弹出微信消息
-* 鼠标点击触发TodoList显示
-  * 用户自定义任务
-* 宠物互动
-  * 提醒喝水
-  * 时间显示（或者整点报时）
-  * 偶尔弹出消息
-  * ......
+- [ ] 自定义图标和宠物样式
+- [ ] 整点报时
+- [ ] 微信消息提醒
+- [ ] 提醒喝水、偶尔弹出消息等互动
 
+---
 
+## 技术栈
 
-## How to use it
+- Qt 6 Widgets
+- Qt Network（版本检查）
+- CMake
+- QSettings / INI 持久化
 
-添加事件：在托盘图标那里，右键点击add，弹出窗口。
+---
 
-目前添加和删除事件都在那个窗口里面。
+## License
 
-右键桌面宠物可以显示任务列表，左键隐藏列表。
-
-
-
-## Frame 💭
-
-......
-
-
-
-## THE NEXT VERSION：（有空再写）
-
-> 1.  允许用户自定义图标和宠物样式
-> 2. 整点报时
-> 3. 番茄时钟
-> 4. （消息提醒）
+见 `LICENSE` 文件。
