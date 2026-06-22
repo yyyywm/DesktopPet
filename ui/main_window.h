@@ -13,6 +13,8 @@
 #include "task_list_dialog.h"
 #include "add_dialog.h"
 
+#include "core/event_repository.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,7 +23,8 @@ class MainWindow : public QMainWindow {
  Q_OBJECT
 
  public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent,
+                        desktop_todo::core::EventRepository* event_repository);
     ~MainWindow();
 
     QSystemTrayIcon *tray_icon_;
@@ -34,6 +37,7 @@ class MainWindow : public QMainWindow {
 
  private:
     Ui::MainWindow *ui_;
+    desktop_todo::core::EventRepository* event_repository_ = nullptr;
     bool m_b_drag_{};  // 判断拖拽状态
     QPointF mouse_start_point_;   // 鼠标起点坐标
     QPointF window_top_left_point_;  // 窗口左上角坐标

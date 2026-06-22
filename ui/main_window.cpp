@@ -8,8 +8,10 @@
 #include <QDebug>
 #include "Struct.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui_(new Ui::MainWindow) {
+MainWindow::MainWindow(
+    QWidget *parent,
+    desktop_todo::core::EventRepository* event_repository)
+    : QMainWindow(parent), ui_(new Ui::MainWindow), event_repository_(event_repository) {
     ui_->setupUi(this);
 
     qDebug() << "start!!!";
