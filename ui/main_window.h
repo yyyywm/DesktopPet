@@ -1,80 +1,71 @@
-
 #ifndef DESKTOP_TODO__MAIN_WINDOW_H_
 #define DESKTOP_TODO__MAIN_WINDOW_H_
 
-#include <QMainWindow>
-#include <QSystemTrayIcon>
 #include <QAction>
+#include <QMainWindow>
 #include <QMenu>
 #include <QMouseEvent>
-#include <QTextCharFormat>
-#include <QPainter>
-#include <QBitmap>
-#include "task_list_dialog.h"
-#include "add_dialog.h"
+#include <QMovie>
+#include <QSystemTrayIcon>
 
+#include "add_dialog.h"
 #include "core/event_repository.h"
 #include "services/update_service.h"
+#include "task_list_dialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
 class MainWindow : public QMainWindow {
- Q_OBJECT
+  Q_OBJECT
 
  public:
-    explicit MainWindow(
-        QWidget *parent,
-        desktop_todo::core::EventRepository* event_repository,
-        desktop_todo::services::UpdateService* update_service);
-    ~MainWindow();
-
-    QSystemTrayIcon *tray_icon_;
-    QMenu *m_menu_;
-    QAction *show_action_;
-    QAction *exit_action_;
-    QAction *hide_action_;
-    QAction *update_action_;
-    void CreateActions();
-    void CreateMenu();
+  explicit MainWindow(
+      QWidget* parent,
+      desktop_todo::core::EventRepository* event_repository,
+      desktop_todo::services::UpdateService* update_service);
+  ~MainWindow();
 
  private:
-    void OnUpToDate();
-    void OnUpdateAvailable(const QString& release_date,
-                           const QString& log,
-                           const QString& url);
-    void OnUpdateCheckFailed(const QString& reason);
-    void OpenUrlInBrowser(const QString& url);
+  void CreateActions();
+  void CreateMenu();
+  void ConnectUpdateService();
 
-    Ui::MainWindow *ui_;
-    desktop_todo::core::EventRepository* event_repository_ = nullptr;
-    desktop_todo::services::UpdateService* update_service_ = nullptr;
-    bool m_b_drag_{};  // 判断拖拽状态
-    QPointF mouse_start_point_;   // 鼠标起点坐标
-    QPointF window_top_left_point_;  // 窗口左上角坐标
+  void OnUpToDate();
+  void OnUpdateAvailable(const QString& release_date,
+                         const QString& log,
+                         const QString& url);
+  void OnUpdateCheckFailed(const QString& reason);
+  void OpenUrlInBrowser(const QString& url);
 
- protected:
-    // 重写以下函数
-
-    void paintEvent(QPaintEvent *) override;
-
-    // 鼠标按下事件
-    void mousePressEvent(QMouseEvent *event) override;
-
-    // 鼠标移动事件
-    void mouseMoveEvent(QMouseEvent *event) override;
-
-    // 鼠标释放事件
-    void mouseReleaseEvent(QMouseEvent *event) override;
-
-    TaskListDialog *todo_win_ = nullptr;
-
-    AddDialog *add_event_ = nullptr;
+  void paintEvent(QPaintEvent* event) override;
+  void mousePressEvent(QMouseEvent* event) override;
+  void mouseMoveEvent(QMouseEvent* event) override;
+  void mouseReleaseEvent(QMouseEvent* event) override;
 
  private slots:
-    void OnActivatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);
+  void OnActivatedSysTrayIcon(QSystemTrayIcon::ActivationReason reason);
 
+ private:
+  Ui::MainWindow* ui_ = nullptr;
+  desktop_todo::core::EventRepository* event_repository_ = nullptr;
+  desktop_todo::services::UpdateService* update_service_ = nullptr;
+
+  bool dragging_ = false;
+  QPointF drag_start_mouse_position_;
+  QPointF drag_start_window_position_;
+
+  QSystemTrayIcon* tray_icon_ = nullptr;
+  QMenu* tray_menu_ = nullptr;
+  QAction* show_action_ = nullptr;
+  QAction* hide_action_ = nullptr;
+  QAction* update_action_ = nullptr;
+  QAction* exit_action_ = nullptr;
+
+  TaskListDialog* task_list_dialog_ = nullptr;
+  AddDialog* add_dialog_ = nullptr;
+  QMovie* movie_ = nullptr;
 };
 
-#endif // DESKTOP_TODO__MAIN_WINDOW_H_
+#endif  // DESKTOP_TODO__MAIN_WINDOW_H_
