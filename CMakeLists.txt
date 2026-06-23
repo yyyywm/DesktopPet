@@ -54,7 +54,10 @@ qt_add_qml_module(desktop_todo
         qml/TaskListDialog.qml
         qml/AddDialog.qml
         qml/TaskListItem.qml
+    RESOURCES
         qml/Theme.qml
+        image/bear.gif
+        image/cat.ico
     RESOURCE_PREFIX "/"
 )
 

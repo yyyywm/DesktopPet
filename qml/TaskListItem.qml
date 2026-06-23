@@ -5,7 +5,7 @@ import QtQuick.Layouts
 RowLayout {
     id: root
     width: ListView.view.width
-    spacing: Theme.paddingSmall
+    spacing: AppTheme.paddingSmall
 
     required property int index
     required property int eventId
@@ -34,8 +34,8 @@ RowLayout {
         text: root.text
         background: Rectangle {
             color: "transparent"
-            border.color: parent.activeFocus ? Theme.primary : "transparent"
-            radius: Theme.radiusSmall
+            border.color: parent.activeFocus ? AppTheme.primary : "transparent"
+            radius: AppTheme.radiusSmall
         }
         onEditingFinished: {
             if (text !== root.text) {

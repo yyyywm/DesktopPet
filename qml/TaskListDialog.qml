@@ -6,7 +6,7 @@ import QtQuick.Window
 Window {
     id: root
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
-    color: Theme.background
+    color: AppTheme.background
     width: 360
     height: 400
     visible: false
@@ -29,8 +29,8 @@ Window {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.paddingMedium
-        spacing: Theme.paddingSmall
+        anchors.margins: AppTheme.paddingMedium
+        spacing: AppTheme.paddingSmall
 
         ListView {
             id: listView
@@ -38,7 +38,7 @@ Window {
             Layout.fillHeight: true
             model: TaskModel
             clip: true
-            spacing: Theme.paddingSmall
+            spacing: AppTheme.paddingSmall
 
             delegate: TaskListItem {
                 onTextEdited: function (newText) {

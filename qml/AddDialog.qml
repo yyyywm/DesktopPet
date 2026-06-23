@@ -6,7 +6,7 @@ import QtQuick.Window
 Window {
     id: root
     flags: Qt.WindowStaysOnTopHint | Qt.Dialog | Qt.FramelessWindowHint
-    color: Theme.background
+    color: AppTheme.background
     width: 320
     height: 360
     minimumWidth: 240
@@ -54,8 +54,8 @@ Window {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: Theme.paddingMedium
-        spacing: Theme.paddingSmall
+        anchors.margins: AppTheme.paddingMedium
+        spacing: AppTheme.paddingSmall
 
         ListView {
             id: listView
@@ -63,7 +63,7 @@ Window {
             Layout.fillHeight: true
             model: ListModel { id: listModel }
             clip: true
-            spacing: Theme.paddingSmall
+            spacing: AppTheme.paddingSmall
 
             delegate: RowLayout {
                 width: ListView.view.width
@@ -79,7 +79,7 @@ Window {
 
         RowLayout {
             Layout.alignment: Qt.AlignHCenter
-            spacing: Theme.paddingSmall
+            spacing: AppTheme.paddingSmall
 
             Button {
                 text: qsTr("添加")

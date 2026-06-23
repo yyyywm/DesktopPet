@@ -53,17 +53,17 @@ PetWindow {
         ColumnLayout {
             id: contentLayout
             width: updateDialog.availableWidth
-            spacing: Theme.paddingSmall
+            spacing: AppTheme.paddingSmall
 
             Label {
                 text: updateDialog.title
                 font.bold: true
-                font.pixelSize: Theme.fontTitle
+                font.pixelSize: AppTheme.fontTitle
             }
             Label {
                 text: updateDialog.body
                 visible: updateDialog.body.length > 0
-                font.pixelSize: Theme.fontBody
+                font.pixelSize: AppTheme.fontBody
                 wrapMode: Text.Wrap
                 Layout.fillWidth: true
             }
