@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick
 import QtQuick.Window
 
 Window {

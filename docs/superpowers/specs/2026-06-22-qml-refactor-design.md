@@ -55,17 +55,16 @@ main.cpp
 - 继承 `QAbstractListModel`。
 - 包装 `EventRepository*`，监听其数据变化并发出 `dataChanged` / `rowsInserted` / `rowsRemoved`。
 - 角色：
-  - `IdRole`（`id`）
+  - `IdRole`（`eventId`）
   - `TextRole`（`text`）
   - `DoneRole`（`done`）
   - `PriorityRole`（`priority`）
 - 提供 QML 可调用的方法：
   - `void addEvent(QString text)`
   - `void removeDoneEvents()`
-  - `void setDone(int id, bool done)`
-  - `void setText(int id, QString text)`
   - `void clear()`
   - `void save()`
+- QML 端通过 `TaskModel.setData(index, value, role)` 修改任务文本和完成状态。
 
 #### `EventRepository`（调整）
 - 新增数据变更通知信号，供 `TaskListModel` 连接：
@@ -90,14 +89,16 @@ main.cpp
 | `PetWindow.qml` | 桌面宠物主窗口：无边框、置顶、透明背景、GIF 动画、拖拽移动、鼠标事件分发。 |
 | `TaskListDialog.qml` | 任务列表弹窗：基于 `Dialog`，使用 `ListView` 展示任务，支持勾选和编辑。 |
 | `AddDialog.qml` | 添加/编辑任务弹窗：基于 `Dialog`，可添加、删除、确认、取消。 |
-| `Theme.qml` | 现代风格常量：颜色、圆角、阴影、间距、字体大小；作为 `pragma Singleton` 单例供全局使用。 |
+| `Theme.qml` | 现代风格常量：颜色、圆角、阴影、间距、字体大小；在 `main.cpp` 中实例化为 `AppTheme` 并作为 context property 注入 QML。 |
 | `TaskListItem.qml` | 任务列表单行组件：复选框 + 文本输入框。 |
-| `IconButton.qml` | 通用图标/文字按钮组件。 |
 
 ### 4.2 关键 QML 实现细节
 
 #### `PetWindow.qml`
 ```qml
+import QtQuick
+import QtQuick.Window
+
 Window {
     id: petWindow
     flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.Tool
@@ -153,19 +154,21 @@ Window {
 
 - 替换 `find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)` 为：
   ```cmake
-  find_package(Qt6 REQUIRED COMPONENTS Core Qml Quick QuickControls2 Network)
+  find_package(Qt6 REQUIRED COMPONENTS Core Widgets Qml Quick QuickControls2 Network)
   ```
+  说明：`Qt6::Widgets` 仍需保留，因为 `ApplicationController` 使用 `QSystemTrayIcon` 和 `QMenu`。
 - 链接库替换为：
   ```cmake
   target_link_libraries(desktop_todo PRIVATE
       Qt6::Core
+      Qt6::Widgets
       Qt6::Qml
       Qt6::Quick
       Qt6::QuickControls2
       Qt6::Network
   )
   ```
-- 使用 `qt_add_qml_module` 将 `qml/` 目录注册为 QML 模块：
+- 使用 `qt_add_qml_module` 将 `qml/` 目录注册为 QML 模块，并用 `RESOURCES` 嵌入图片资源：
   ```cmake
   qt_add_qml_module(desktop_todo
       URI DesktopPet
@@ -177,7 +180,12 @@ Window {
           qml/AddDialog.qml
           qml/Theme.qml
           qml/TaskListItem.qml
-          qml/IconButton.qml
+      RESOURCES
+          image/image.png
+          image/image_left.png
+          image/image_right.png
+          image/bear.gif
+          image/test.gif
       RESOURCE_PREFIX "/"
   )
   ```
@@ -186,8 +194,8 @@ Window {
 
 ### 6.2 资源路径
 
-- GIF 和图标仍通过相对路径 `../image/` 加载，保持与现有运行方式一致。
-- 配置文件仍使用 `../config/eventlist.ini`。
+- GIF 和图标通过 CMake `RESOURCES` 嵌入到二进制中，QML 内使用 `qrc:/DesktopPet/image/...` 访问。
+- 配置文件仍使用 `../config/eventlist.ini`（运行目录为 `build/` 时解析为仓库根目录的 `config/eventlist.ini`）。
 
 ## 7. 迁移步骤概要
 
@@ -195,8 +203,8 @@ Window {
 2. **扩展 `EventRepository`**：增加变更通知信号。
 3. **创建 QML 模块与基础组件**：`main.qml`、`PetWindow.qml`、`Theme.qml`。
 4. **实现 `TaskListDialog.qml` 和 `AddDialog.qml`**，并对接 `TaskModel`。
-5. **改造 `main.cpp`**：使用 `QGuiApplication` + `QQmlApplicationEngine`。
-6. **更新 `CMakeLists.txt`**：切换 Qt 模块、注册 QML 文件、删除 Widgets 依赖。
+5. **改造 `main.cpp`**：使用 `QApplication` + `QQmlApplicationEngine`；实例化 `Theme.qml` 并作为 `AppTheme` 注入。
+6. **更新 `CMakeLists.txt`**：切换 Qt 模块、注册 QML 文件、嵌入图片资源。
 7. **删除旧 `ui/` 文件**。
 8. **构建并手动验证**核心流程（见 `AGENTS.md` 提交前检查）。
 
